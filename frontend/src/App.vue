@@ -181,11 +181,6 @@ async function refreshEffectiveVip() {
   }
 }
 async function handleKlineAnalysisClick() {
-  await refreshEffectiveVip()
-  if (vipLevel.value < 2) {
-    getDiscreteMessage().warning('K线分析功能需要 VIP2 及以上赞助用户才能使用，请升级后体验')
-    return
-  }
   activeKey.value = 'klineAnalysis'
   router.push({ name: 'klineAnalysis' })
 }

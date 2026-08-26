@@ -280,21 +280,10 @@ function showStockKline(row) {
     message.warning('当前代码暂不支持K线图')
     return
   }
-  refreshEffectiveVip().then(() => {
-    klineStockCode.value = em
-    klineStockName.value = stockName || ''
-    if (vipLevel.value < 2) {
-      message.warning('K线图仅限 VIP2 及以上用户使用，您当前权限不足，将在 10 秒后自动关闭')
-      klineModalShow.value = true
-      if (klineAutoCloseTimer) clearTimeout(klineAutoCloseTimer)
-      klineAutoCloseTimer = setTimeout(() => {
-        klineModalShow.value = false
-      }, 10000)
-      return
-    }
-    klineModalShow.value = true
-    if (klineAutoCloseTimer) clearTimeout(klineAutoCloseTimer)
-  })
+  klineStockCode.value = em
+  klineStockName.value = stockName || ''
+  klineModalShow.value = true
+  if (klineAutoCloseTimer) clearTimeout(klineAutoCloseTimer)
 }
 
 function isNumeric(value) {

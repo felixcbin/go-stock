@@ -23,7 +23,7 @@ const vipLevel=ref("");
 const vipStartTime=ref("");
 const vipEndTime=ref("");
 const expired=ref(false)
-const isValidVip=ref(false) // 是否是会员
+const isValidVip=ref(true) // VIP 判定已全面开放
 
 onBeforeMount(()=> {
   GetConfig().then(result => {
@@ -34,19 +34,11 @@ onBeforeMount(()=> {
 
   GetSponsorInfo().then((res) => {
    // console.log(res)
-    vipLevel.value = res.vipLevel;
+    vipLevel.value = res.vipLevel || "2";
     vipStartTime.value = res.vipStartTime;
     vipEndTime.value = res.vipEndTime;
-    //判断时间是否到期
-    if (res.vipLevel) {
-      if (res.vipEndTime < format(new Date(), 'yyyy-MM-dd HH:mm:ss')) {
-        //notify.warning({content: 'VIP已到期'})
-        expired.value = true;
-      }
-    }else{
-      //notify.success({content: '未开通VIP'})
-    }
-    isValidVip.value = !(vipLevel.value === "" || Number(vipLevel.value) <= 0);
+    expired.value = false;
+    isValidVip.value = true;
   })
 })
 onMounted(() => {
@@ -483,10 +475,6 @@ function recommendRangeToSinglePrice(p) {
 }
 
 function showDetail(row) {
-  if(vipLevel.value===""|| Number(vipLevel.value) <=0){
-    notify.warning({content: '未开通VIP或者已经过期'})
-    return
-  }
   modalDataRef.title = row.stockName
   modalDataRef.content = row.recommendReason
   modalDataRef.riskRemarks = row.riskRemarks

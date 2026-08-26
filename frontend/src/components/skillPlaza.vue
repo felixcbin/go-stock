@@ -371,10 +371,6 @@ async function handleFavorite(skill) {
 
 // 从广场下载技能包并导入本地 skills 目录
 async function handleImport(skill) {
-  if (skill.needVip) {
-    message.warning('该技能为VIP专属，请先开通VIP')
-    return
-  }
   detailModal.importing = true
   try {
     const data = await apiGet(`/skills/${skill.id}/download`)
