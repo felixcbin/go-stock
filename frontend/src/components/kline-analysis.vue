@@ -56,12 +56,11 @@ async function refreshEffectiveVip() {
 }
 
 function startVipCheck() {
-  if (vipTimer) clearInterval(vipTimer)
-  if (vipLevel.value < 2) {
-    showVipModal.value = true
-    vipTimer = setInterval(() => {
-      showVipModal.value = true
-    }, 60000)
+  // VIP 判定已全面开放，不再弹窗拦截
+  showVipModal.value = false
+  if (vipTimer) {
+    clearInterval(vipTimer)
+    vipTimer = null
   }
 }
 

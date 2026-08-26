@@ -17,9 +17,19 @@ const DefaultSponsorAESKeyHex = ""
 // SponsorDecryptKeyHex 由主程序在启动时同步为 ldflags 注入的 BuildKey；为空则使用 DefaultSponsorAESKeyHex。
 var SponsorDecryptKeyHex string
 
+// UnlockAllVIP 为 true 时跳过赞助码校验，始终视为有效 VIP2（本地开放全部功能）。
+const UnlockAllVIP = true
+
+// ForcedVIPLevel 开放模式下返回的 VIP 等级。
+const ForcedVIPLevel = 2
+
 // EffectiveSponsorVipLevel 根据设置中的 sponsorCode 解析 VIP 等级，并按 vipAuthTime / vipStartTime / vipEndTime 判断是否当前有效。
 // 与 app.isVip 时间判断逻辑保持一致。
+// 当 UnlockAllVIP 为 true 时，始终返回有效 VIP2。
 func EffectiveSponsorVipLevel() (level int, active bool) {
+	if UnlockAllVIP {
+		return ForcedVIPLevel, true
+	}
 	keyHex := strings.TrimSpace(SponsorDecryptKeyHex)
 	if keyHex == "" {
 		keyHex = DefaultSponsorAESKeyHex

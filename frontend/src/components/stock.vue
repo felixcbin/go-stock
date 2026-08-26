@@ -2900,19 +2900,6 @@ async function showLightweightKline(code, name) {
   }
 
   await refreshEffectiveVip()
-  // 检查 VIP 权限：有效期内 VIP2 及以上（与 AI 助手 Web 端校验一致）
-  if (vipLevel.value < 2) {
-    message.warning('多周期 K 线仅限 VIP2 及以上用户使用，您当前权限不足，将在 10 秒后自动关闭')
-    lwKlineCode.value = em
-    lwKlineName.value = name || ''
-    modalShow6.value = true
-    // 10 秒后自动关闭
-    klineAutoCloseTimer.value = setTimeout(() => {
-      modalShow6.value = false
-      message.info('权限不足，多周期 K 线已自动关闭')
-    }, 10000)
-    return
-  }
   modalShow6.value = true
 }
 

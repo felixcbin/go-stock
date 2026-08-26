@@ -244,18 +244,12 @@ async function refreshEffectiveVip() {
 }
 
 function openKlineChart(row) {
-  refreshEffectiveVip().then(() => {
-    if (vipLevel.value < 2) {
-      message.warning('查看K线仅限VIP2及以上用户使用')
-      return
-    }
-    klineStockCode.value = toEastMoneyCode(row.StockCode)
-    klineStockName.value = row.StockName || ''
-    showKlineModal.value = true
-    longStopLossPrice.value = row.StopLossPrice || 0
-    longTakeProfitPrice.value = row.TakeProfitPrice || 0
-    costPrice.value = row.Price || 0
-  })
+  klineStockCode.value = toEastMoneyCode(row.StockCode)
+  klineStockName.value = row.StockName || ''
+  showKlineModal.value = true
+  longStopLossPrice.value = row.StopLossPrice || 0
+  longTakeProfitPrice.value = row.TakeProfitPrice || 0
+  costPrice.value = row.Price || 0
 }
 
 

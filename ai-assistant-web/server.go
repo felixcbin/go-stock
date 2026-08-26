@@ -94,7 +94,7 @@ func (a *app) vipStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	level, active := data.EffectiveSponsorVipLevel()
-	ok := active && level >= 2
+	ok := data.UnlockAllVIP || (active && level >= 2)
 	payload := map[string]any{
 		"ok":       ok,
 		"vipLevel": level,
@@ -114,6 +114,9 @@ func vipDeniedMessage(level int, active bool) string {
 }
 
 func requireVip2(w http.ResponseWriter) bool {
+	if data.UnlockAllVIP {
+		return true
+	}
 	level, active := data.EffectiveSponsorVipLevel()
 	if active && level >= 2 {
 		return true

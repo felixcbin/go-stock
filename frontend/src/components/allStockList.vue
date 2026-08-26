@@ -30,20 +30,11 @@ onBeforeMount(() => {
 
   GetSponsorInfo().then((res) => {
     // console.log(res)
-    vipLevel.value = res.vipLevel;
+    vipLevel.value = res.vipLevel || "2";
     vipStartTime.value = res.vipStartTime;
     vipEndTime.value = res.vipEndTime;
-    //判断时间是否到期
-    if (res.vipLevel) {
-      if (res.vipEndTime < format(new Date(), 'yyyy-MM-dd HH:mm:ss')) {
-        //notify.warning({content: 'VIP已到期'})
-        expired.value = true;
-      }
-    }else{
-      //notify.success({content: '未开通VIP'})
-    }
-    isValidVip.value = !(vipLevel.value === "" || Number(vipLevel.value) <= 0);
-
+    expired.value = false;
+    isValidVip.value = true;
   })
 
 })
@@ -60,7 +51,7 @@ const vipLevel=ref("");
 const vipStartTime=ref("");
 const vipEndTime=ref("");
 const expired=ref(false)
-const isValidVip=ref(false) // 是否是会员
+const isValidVip=ref(true) // VIP 判定已全面开放
 
 // 多周期 K 线（VIP2）
 const effectiveVipLevel = ref(0)
@@ -96,11 +87,6 @@ async function showMultiKline(row) {
   const em = toEastMoneyCodeFromSecucode(row.SECUCODE)
   if (!em) {
     message.warning('当前代码暂不支持多周期K线图')
-    return
-  }
-  await refreshEffectiveVip()
-  if (effectiveVipLevel.value < 2) {
-    message.warning('多周期 K 线仅限 VIP2 及以上用户使用，您当前权限不足')
     return
   }
   multiKlineCode.value = em
@@ -425,9 +411,6 @@ const optionsReactive= reactive([
  ])
 
 function loadStocks(page, pageSize) {
-  if((vipLevel.value===""|| Number(vipLevel.value) <=0)){
-    handleReset()
-  }
   if (!loadingRef.value) {
     loadingRef.value = true
     GetAllStocks(page, pageSize, paginationReactive.keyword, technicalIndicatorReactive).then((res) => {
@@ -452,11 +435,7 @@ function loadStocks(page, pageSize) {
   }
 }
 function handleCheckedChange(checked) {
-
-  if(checked&&(vipLevel.value===""|| Number(vipLevel.value) <=0)){
-    handleReset()
-    message.warning('未开通VIP或者已经过期，无法使用技术面筛选')
-  }
+  // VIP 判定已开放，技术面筛选不再拦截
 }
 function handlePageChange(currentPage) {
   loadStocks(currentPage, paginationReactive.pageSize)

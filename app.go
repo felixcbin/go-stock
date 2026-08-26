@@ -98,7 +98,23 @@ func (a *App) removeCronEntry(key string) {
 }
 
 func (a *App) GetSponsorInfo() map[string]any {
-	return a.SponsorInfo
+	info := a.SponsorInfo
+	if info == nil {
+		info = map[string]any{}
+	}
+	if !data.UnlockAllVIP {
+		return info
+	}
+	// 本地开放：始终返回有效 VIP2，供浮动 AI 助手等读取 GetSponsorInfo 的前端门槛使用
+	out := make(map[string]any, len(info)+4)
+	for k, v := range info {
+		out[k] = v
+	}
+	out["vipLevel"] = convertor.ToString(data.ForcedVIPLevel)
+	out["vipStartTime"] = "2000-01-01 00:00:00"
+	out["vipEndTime"] = "2099-12-31 23:59:59"
+	out["vipAuthTime"] = "2000-01-01 00:00:00"
+	return out
 }
 
 // GetEffectiveSponsorVip 从本地配置解密赞助信息并判断当前是否在 VIP 有效期内（与 ai-assistant-web / data.EffectiveSponsorVipLevel 一致）。
@@ -581,34 +597,61 @@ func (a *App) downloadUpdate(url string, tmpPath string, totalSize int64, downlo
 func (a *App) isVip(sponsorCode string, downloadUrl string, releaseVersion *models.GitHubReleaseVersion) (string, string, bool) {
 	isVip := false
 	vipLevel := "0"
+	if data.UnlockAllVIP {
+		isVip = true
+		vipLevel = convertor.ToString(data.ForcedVIPLevel)
+		if a.SponsorInfo == nil {
+			a.SponsorInfo = map[string]any{}
+		}
+		a.SponsorInfo["vipLevel"] = vipLevel
+		a.SponsorInfo["vipStartTime"] = "2000-01-01 00:00:00"
+		a.SponsorInfo["vipEndTime"] = "2099-12-31 23:59:59"
+		a.SponsorInfo["vipAuthTime"] = "2000-01-01 00:00:00"
+	}
 	sponsorCode = strutil.Trim(a.GetConfig().SponsorCode)
 	if sponsorCode != "" {
 		encrypted, err := hex.DecodeString(sponsorCode)
 		if err != nil {
 			logger.SugaredLogger.Error(err.Error())
+			if data.UnlockAllVIP {
+				return downloadUrl, vipLevel, true
+			}
 			return "", "0", false
 		}
 		key, err := hex.DecodeString(BuildKey)
 		if err != nil {
 			logger.SugaredLogger.Error(err.Error())
+			if data.UnlockAllVIP {
+				return downloadUrl, vipLevel, true
+			}
 			return "", "0", false
 		}
 		decrypt := string(cryptor.AesEcbDecrypt(encrypted, key))
 		err = json.Unmarshal([]byte(decrypt), &a.SponsorInfo)
 		if err != nil {
 			logger.SugaredLogger.Error(err.Error())
+			if data.UnlockAllVIP {
+				return downloadUrl, vipLevel, true
+			}
 			return "", "0", false
 		}
-		vipLevel = a.SponsorInfo["vipLevel"].(string)
+		if !data.UnlockAllVIP {
+			vipLevel = a.SponsorInfo["vipLevel"].(string)
+		} else {
+			a.SponsorInfo["vipLevel"] = vipLevel
+		}
 		vipStartTime, err := time.ParseInLocation("2006-01-02 15:04:05", a.SponsorInfo["vipStartTime"].(string), time.Local)
 		vipEndTime, err := time.ParseInLocation("2006-01-02 15:04:05", a.SponsorInfo["vipEndTime"].(string), time.Local)
 		vipAuthTime, err := time.ParseInLocation("2006-01-02 15:04:05", a.SponsorInfo["vipAuthTime"].(string), time.Local)
 		if err != nil {
 			logger.SugaredLogger.Error(err.Error())
+			if data.UnlockAllVIP {
+				return downloadUrl, vipLevel, true
+			}
 			return "", vipLevel, false
 		}
 
-		if time.Now().After(vipAuthTime) && time.Now().After(vipStartTime) && time.Now().Before(vipEndTime) {
+		if data.UnlockAllVIP || (time.Now().After(vipAuthTime) && time.Now().After(vipStartTime) && time.Now().Before(vipEndTime)) {
 			isVip = true
 		}
 
