@@ -5102,6 +5102,7 @@ export namespace models {
 	    buildTimeStamp: number;
 	    officialStatement: string;
 	    customBuild: boolean;
+	    disableAutoUpdate: boolean;
 	    IsDel: number;
 	
 	    static createFrom(source: any = {}) {
@@ -5123,6 +5124,7 @@ export namespace models {
 	        this.buildTimeStamp = source["buildTimeStamp"];
 	        this.officialStatement = source["officialStatement"];
 	        this.customBuild = source["customBuild"];
+	        this.disableAutoUpdate = source["disableAutoUpdate"];
 	        this.IsDel = source["IsDel"];
 	    }
 	

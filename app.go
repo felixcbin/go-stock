@@ -304,9 +304,9 @@ func (a *App) CheckUpdate(flag int) {
 		}
 	}
 
-	// 定制版本：不检查新版本、不启用自动更新（启动检查/定时检查/手动检查均在此拦截），
+	// 定制版本或禁用自动更新：不检查新版本、不下载替换（启动/定时/手动检查均在此拦截），
 	// 仅保留赞助码解密与 VIP 等级判定（VIP2 及以上仍同步资讯）
-	if CustomBuild {
+	if CustomBuild || data.DisableAutoUpdate {
 		if _, vipLevel, ok := a.isVip(sponsorCode, "", &models.GitHubReleaseVersion{}); ok {
 			level, _ := convertor.ToInt(vipLevel)
 			a.VipLevel = level
@@ -1016,10 +1016,6 @@ func (a *App) domReady(ctx context.Context) {
 		a.cron.AddFunc("0 0 2 * * *", func() {
 			logger.SugaredLogger.Errorf("Checking for updates...")
 			a.CheckStockBaseInfo(a.ctx)
-		})
-		a.cron.AddFunc("30 05 8,12,20 * * *", func() {
-			logger.SugaredLogger.Errorf("Checking for updates...")
-			a.CheckUpdate(0)
 		})
 		a.cron.AddFunc("30 05 8,12,20 * * *", func() {
 			syncAllStockInfo(a.ctx)
@@ -2243,6 +2239,7 @@ func (a *App) GetVersionInfo() *models.VersionInfo {
 		Content:           VersionCommit,
 		OfficialStatement: OFFICIAL_STATEMENT,
 		CustomBuild:       CustomBuild,
+		DisableAutoUpdate: data.DisableAutoUpdate,
 	}
 }
 

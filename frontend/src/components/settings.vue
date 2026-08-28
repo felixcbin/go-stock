@@ -78,17 +78,9 @@ const formValue = ref({
   httpProxyEnabled:false,
   enableAgent: false,
   qgqpBId: '',
-  updateChannel: 'release',
   // 广场服务地址固定（定制版不可修改）
   promptPlazaApiBase: 'https://go-stock.sparkmemory.top/api',
 })
-
-const updateChannelOptions = [
-  { label: 'Release（稳定版）', value: 'release' },
-  { label: 'Pre-release（预发布版）', value: 'pre' },
-  { label: 'Dev（开发版）', value: 'dev' },
-]
-
 const promptTemplates = ref([])
 
 // 跳转到独立的 AI 模型服务管理页面
@@ -153,7 +145,6 @@ onMounted(() => {
     formValue.value.httpProxyEnabled=res.httpProxyEnabled;
     formValue.value.enableAgent = res.enableAgent;
     formValue.value.qgqpBId = res.qgqpBId;
-    formValue.value.updateChannel = res.updateChannel || 'release';
     // 广场服务地址固定（定制版不可修改），后端 GetSettingConfig 始终返回固定值，此处兜底
     formValue.value.promptPlazaApiBase = res.promptPlazaApiBase || 'https://go-stock.sparkmemory.top/api';
 
@@ -209,7 +200,6 @@ function saveConfig() {
     httpProxyEnabled:formValue.value.httpProxyEnabled,
     enableAgent: formValue.value.enableAgent,
     qgqpBId: formValue.value.qgqpBId,
-    updateChannel: formValue.value.updateChannel,
     // 广场服务地址固定值（后端 UpdateConfig 也会强制覆盖）
     promptPlazaApiBase: 'https://go-stock.sparkmemory.top/api',
   })
@@ -426,7 +416,6 @@ function importConfig() {
       formValue.value.httpProxyEnabled=config.httpProxyEnabled
       formValue.value.enableAgent = config.enableAgent
       formValue.value.qgqpBId = config.qgqpBId
-      formValue.value.updateChannel = config.updateChannel || 'release'
 
       // 导入的 AI 配置单独保存到独立管理页面所用的表
       if (Array.isArray(config.aiConfigs) && config.aiConfigs.length > 0) {
@@ -523,26 +512,6 @@ function deletePrompt(ID) {
             </n-form-item-gi>
             <n-form-item-gi :span="6" label="暗黑主题：" path="darkTheme">
               <n-switch v-model:value="formValue.darkTheme"/>
-            </n-form-item-gi>
-            <n-form-item-gi :span="8" label="更新通道：" path="updateChannel">
-              <n-select v-model:value="formValue.updateChannel" :options="updateChannelOptions" />
-              <n-tooltip placement="top">
-                <template #trigger>
-                  <n-icon color="#0e7a0d" size="20">
-                    <HelpCircleFilledIcon />
-                  </n-icon>
-                </template>
-                <template #default>
-                  <n-gradient-text :type="'warning'">
-                  <div style="max-width: 400px;text-align: left">
-                    更新通道说明：<br>
-                    <b>Release（稳定版）</b>：仅接收正式发布版本，稳定性最高<br>
-                    <b>Pre-release（预发布版）</b>：包含预发布版本，可提前体验新功能<br>
-                    <b>Dev（开发版）</b>：包含所有可用版本，获取最新开发进度
-                  </div>
-                  </n-gradient-text>
-                </template>
-              </n-tooltip>
             </n-form-item-gi>
             <n-form-item-gi :span="10" label="浏览器安装路径：" path="browserPath">
               <n-input type="text" placeholder="浏览器安装路径" v-model:value="formValue.browserPath" clearable/>

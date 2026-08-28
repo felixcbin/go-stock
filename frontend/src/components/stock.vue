@@ -993,85 +993,6 @@ onBeforeMount(() => {
     refreshCodeToGroups()
   })
 
-  EventsOn("updateVersion", async (msg) => {
-    const githubTimeStr = msg.published_at;
-    const utcDate = new Date(githubTimeStr);
-    const date = new Date(utcDate.getTime());
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    notify.info({
-      avatar: () =>
-          h(NAvatar, {
-            size: 'small',
-            round: false,
-            src: icon.value
-          }),
-      title: '发现新版本: ' + msg.tag_name,
-      content: () => {
-        return h('div', {
-          style: {
-            'text-align': 'left',
-            'font-size': '14px',
-          }
-        }, {default: () => msg.commit?.message})
-      },
-      duration: 5000,
-      meta: "发布时间:" + formattedDate,
-      action: () => {
-        return h(NButton, {
-          type: 'primary',
-          size: 'small',
-          onClick: () => {
-            Environment().then(env => {
-              switch (env.platform) {
-                case 'windows':
-                  window.open(msg.html_url)
-                  break
-                default :
-                  OpenURL(msg.html_url)
-              }
-            })
-          }
-        }, {default: () => '查看'})
-      }
-    })
-  })
-
-  EventsOn("updateNeedAdmin", (msg) => {
-    notify.warning({
-      avatar: () =>
-          h(NAvatar, {
-            size: 'small',
-            round: false,
-            src: icon.value
-          }),
-      title: '更新需要管理员权限',
-      content: () => {
-        return h('div', {
-          style: {
-            'text-align': 'left',
-            'font-size': '14px',
-          }
-        }, { default: () => '新版本 ' + (msg.version || '') + ' 下载完成，但自动替换文件需要管理员权限。请以管理员身份重启程序后再次检查更新。' })
-      },
-      duration: 15000,
-      action: () => {
-        return h(NButton, {
-          type: 'warning',
-          size: 'small',
-          onClick: () => {
-            RestartAsAdmin()
-          }
-        }, { default: () => '以管理员身份重启' })
-      }
-    })
-  })
-
   EventsOn("warnMsg", async (msg) => {
     notify.error({
       avatar: () =>
@@ -1227,8 +1148,6 @@ onBeforeUnmount(() => {
   EventsOff("refreshFollowList")
   EventsOff("newChatStream")
   EventsOff("changeTab")
-  EventsOff("updateVersion")
-  EventsOff("updateNeedAdmin")
   EventsOff("warnMsg")
   EventsOff("loadingDone")
 

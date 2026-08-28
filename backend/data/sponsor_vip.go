@@ -23,6 +23,9 @@ const UnlockAllVIP = true
 // ForcedVIPLevel 开放模式下返回的 VIP 等级。
 const ForcedVIPLevel = 2
 
+// DisableAutoUpdate 为 true 时禁用软件自动更新（启动检查、定时检查、手动检查及下载替换）。
+const DisableAutoUpdate = true
+
 // EffectiveSponsorVipLevel 根据设置中的 sponsorCode 解析 VIP 等级，并按 vipAuthTime / vipStartTime / vipEndTime 判断是否当前有效。
 // 与 app.isVip 时间判断逻辑保持一致。
 // 当 UnlockAllVIP 为 true 时，始终返回有效 VIP2。
