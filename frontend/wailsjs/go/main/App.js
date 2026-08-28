@@ -1042,6 +1042,10 @@ export function SearchLongTermMemory(arg1, arg2) {
   return window['go']['main']['App']['SearchLongTermMemory'](arg1, arg2);
 }
 
+export function RunWaterStrategyScreen() {
+  return window['go']['main']['App']['RunWaterStrategyScreen']();
+}
+
 export function SearchStock(arg1) {
   return window['go']['main']['App']['SearchStock'](arg1);
 }

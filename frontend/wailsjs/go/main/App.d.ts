@@ -527,6 +527,8 @@ export function SearchKnowledgeBase(arg1:string,arg2:string,arg3:number):Promise
 
 export function SearchLongTermMemory(arg1:string,arg2:number):Promise<Array<agent.MemoryRecall>>;
 
+export function RunWaterStrategyScreen():Promise<Record<string, any>>;
+
 export function SearchStock(arg1:string):Promise<Record<string, any>>;
 
 export function SendDingDingMessage(arg1:string,arg2:string):Promise<string>;

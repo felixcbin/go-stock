@@ -16,6 +16,7 @@ import UplimitLadder from "./uplimitLadder.vue";
 import PromptPlaza from "./promptPlaza.vue";
 import PromptQa from "./promptQa.vue";
 import SelectStock from "./SelectStock.vue";
+import StrategyScreener from "./strategyScreener.vue";
 import DailyOperationPlan from "./DailyOperationPlan.vue";
 import KnowledgeBaseManager from "./knowledge-base-manager.vue";
 import {EventsOff, EventsOn} from "../../wailsjs/runtime";
@@ -74,6 +75,9 @@ function updateTab(name) {
       </n-tab-pane>
       <n-tab-pane name="指标选股">
         <SelectStock/>
+      </n-tab-pane>
+      <n-tab-pane name="水上策略选股">
+        <StrategyScreener/>
       </n-tab-pane>
       <n-tab-pane name="定时任务">
         <CronTaskManager />
