@@ -881,6 +881,29 @@ const menuOptions = ref([
                     to: {
                       name: 'research',
                       query: {
+                        name:"水上策略选股",
+                      },
+                    },
+                    onClick: () => {
+                      activeKey.value = 'research'
+                      setTimeout(() => {
+                        EventsEmit("changeResearchTab", {ID: 12, name: '水上策略选股'})
+                      }, 100)
+                    },
+                  },
+                  {default: () => '水上策略选股'}
+              ),
+          key: 'research_water_strategy',
+          icon: renderIcon(TrendingUp),
+        },
+        {
+          label: () =>
+              h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: 'research',
+                      query: {
                         name:"定时任务",
                       },
                     },

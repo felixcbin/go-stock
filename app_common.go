@@ -214,6 +214,10 @@ func (a *App) GetLatestTradingDay() string {
 func (a *App) SearchStock(words string) map[string]any {
 	return data.NewSearchStockApi(words).SearchStock(5000)
 }
+
+func (a *App) RunWaterStrategyScreen() map[string]any {
+	return data.NewStrategyScreenerApi().RunWaterStrategyScreen()
+}
 func (a *App) GetHotStrategy() map[string]any {
 	return data.NewSearchStockApi("").HotStrategy()
 }
